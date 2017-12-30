@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/recipe_image_width"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/recipe_placeholder"/>
+
+        <TextView
+            android:id="@+id/txtIngredient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgRecipe"
+            android:padding="@dimen/padding_small"
+            android:text="@string/ingredients"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/font_xlarge"
+            android:textStyle="bold"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvIngredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtIngredient"
+            android:padding="@dimen/margin_small"/>
+
+        <View
+            android:id="@+id/viewSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/rvIngredients"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@color/colorPrimaryDark"/>
+
+        <TextView
+            android:id="@+id/txtSteps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/viewSeparator"
+            android:padding="@dimen/padding_small"
+            android:text="@string/steps"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/font_xlarge"
+            android:textStyle="bold"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvSteps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtSteps"
+            android:padding="@dimen/margin_small"/>
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

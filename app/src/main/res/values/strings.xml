@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Foody</string>
+    <string name="something_went_wrong">Something went wrong, Try again later</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="steps">Steps</string>
+
+    <integer name="recipe_image_width">180</integer>
+</resources>
