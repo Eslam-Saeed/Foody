@@ -21,9 +21,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/imgRecipe"
+            android:background="@color/colorPrimary"
             android:padding="@dimen/padding_small"
             android:text="@string/ingredients"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorWhite"
             android:textSize="@dimen/font_xlarge"
             android:textStyle="bold"/>
 
@@ -34,22 +35,16 @@
             android:layout_below="@id/txtIngredient"
             android:padding="@dimen/margin_small"/>
 
-        <View
-            android:id="@+id/viewSeparator"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_below="@id/rvIngredients"
-            android:layout_margin="@dimen/margin_small"
-            android:background="@color/colorPrimaryDark"/>
-
         <TextView
             android:id="@+id/txtSteps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/viewSeparator"
+            android:layout_below="@+id/rvIngredients"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@color/colorPrimary"
             android:padding="@dimen/padding_small"
             android:text="@string/steps"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorWhite"
             android:textSize="@dimen/font_xlarge"
             android:textStyle="bold"/>
 
