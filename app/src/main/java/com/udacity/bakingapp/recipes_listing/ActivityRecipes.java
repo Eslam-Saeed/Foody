@@ -5,6 +5,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.udacity.bakingapp.R;
 import com.udacity.bakingapp.common.base.BaseActivity;
+import com.udacity.bakingapp.common.helpers.Utilities;
 import com.udacity.bakingapp.common.models.Recipe;
 import com.udacity.bakingapp.recipe_details.FragmentRecipeDetails;
 
@@ -37,6 +38,8 @@ public class ActivityRecipes extends BaseActivity implements FragmentRecipesList
 
     @Override
     public void onRecipeClicked(Recipe recipe) {
-        replaceFragment(FragmentRecipeDetails.newInstance(recipe), R.id.fragmentContainerRecipeListing, true);
+        replaceFragment(FragmentRecipeDetails.newInstance(recipe),
+                Utilities.isTablet(this) ? R.id.fragmentContainerDetails :
+                        R.id.fragmentContainerRecipeListing, true);
     }
 }

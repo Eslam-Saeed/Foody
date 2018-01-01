@@ -5,4 +5,8 @@
     <string name="steps">Steps</string>
 
     <integer name="recipe_image_width">180</integer>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="empty">No Ingredients to show</string>
+
 </resources>

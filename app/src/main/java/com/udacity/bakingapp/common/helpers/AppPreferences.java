@@ -8,6 +8,7 @@ public class AppPreferences {
 
 
     public static final String APP_LOCALE_KEY = "appLocale";
+    public static final String SELECTED_RECIPE = "selected_recipe";
 
 
     //======================================================================

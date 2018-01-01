@@ -43,12 +43,6 @@ public class Utilities {
         return context.getResources().getBoolean(R.bool.isTablet);
     }
 
-    public static void openVideo(Context context, String videoKey) {
-        String video_path = "http://www.youtube.com/watch?v=" + videoKey;
-        Uri uri = Uri.parse(video_path);
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        context.startActivity(intent);
-    }
 
 }

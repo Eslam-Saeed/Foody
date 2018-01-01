@@ -16,6 +16,15 @@
             android:scaleType="fitXY"
             android:src="@drawable/recipe_placeholder"/>
 
+        <ImageView
+            android:id="@+id/imgDesired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/imgRecipe"
+            android:layout_alignEnd="@id/imgRecipe"
+            android:layout_margin="@dimen/margin_small"
+            android:src="@drawable/ic_undesired"/>
+
         <TextView
             android:id="@+id/txtIngredient"
             android:layout_width="match_parent"

@@ -57,7 +57,7 @@ public class FragmentRecipesListing extends BaseFragment implements ViewRecipesL
         mContext = getActivity();
         mPresenterRecipesListing = new PresenterRecipesListing(mContext, this);
         mAdapterRecipesListing = new AdapterRecipesListing(mContext, mPresenterRecipesListing.getRecipeList(), this);
-        mGridLayoutManager = new GridLayoutManager(mContext, 1);
+        mGridLayoutManager = new GridLayoutManager(mContext, Utilities.calculateNoOfColumns(mContext, getResources().getInteger(R.integer.recipe_image_width)));
         rvRecipesListing.setLayoutManager(mGridLayoutManager);
         rvRecipesListing.setAdapter(mAdapterRecipesListing);
         mPresenterRecipesListing.serviceGetRecipesList();

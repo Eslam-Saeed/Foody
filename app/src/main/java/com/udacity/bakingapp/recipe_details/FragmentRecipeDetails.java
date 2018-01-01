@@ -1,5 +1,8 @@
 package com.udacity.bakingapp.recipe_details;
 
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,12 +11,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.udacity.bakingapp.R;
 import com.udacity.bakingapp.common.base.BaseFragment;
+import com.udacity.bakingapp.common.helpers.AppPreferences;
 import com.udacity.bakingapp.common.helpers.Constants;
+import com.udacity.bakingapp.common.helpers.MyApplication;
 import com.udacity.bakingapp.common.models.Recipe;
 import com.udacity.bakingapp.common.models.Step;
+import com.udacity.bakingapp.common.widget.BakingWidget;
 import com.udacity.bakingapp.steps.ActivityStep;
 
 /**
@@ -27,12 +34,25 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
     private AdapterIngredient mAdapterIngredient;
     private AdapterSteps mAdapterSteps;
     private LinearLayoutManager mLayoutManagerIngredients, mLayoutManagerSteps;
+    private ImageView imgDesired;
+    private boolean isDesired = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null)
-            mRecipe = getArguments().getParcelable(Constants.SELECTED_RECIPE);
+        mContext = getActivity();
+        if (savedInstanceState == null) {
+            if (getArguments() != null)
+                mRecipe = getArguments().getParcelable(Constants.SELECTED_RECIPE);
+        } else
+            savedInstanceState.getParcelable(Constants.SELECTED_RECIPE);
+        
+        Recipe tempRecipe = MyApplication.getmGson().fromJson(AppPreferences.getString(AppPreferences.SELECTED_RECIPE, mContext, ""), Recipe.class);
+
+        if (mRecipe != null && tempRecipe != null) {
+            if (mRecipe.getId() == tempRecipe.getId())
+                isDesired = true;
+        }
     }
 
     @Nullable
@@ -49,7 +69,6 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mContext = getActivity();
         initializeVariables();
         rvIngredient.setLayoutManager(mLayoutManagerIngredients);
         rvSteps.setLayoutManager(mLayoutManagerSteps);
@@ -68,12 +87,33 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
     protected void initializeViews(View v) {
         rvIngredient = v.findViewById(R.id.rvIngredients);
         rvSteps = v.findViewById(R.id.rvSteps);
+        imgDesired = v.findViewById(R.id.imgDesired);
+        if (isDesired)
+            imgDesired.setImageResource(R.drawable.ic_desired);
     }
 
     @Override
     protected void setListeners() {
-
+        imgDesired.setOnClickListener(imgDesiredClickListener);
     }
+
+    private View.OnClickListener imgDesiredClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (isDesired) {
+                AppPreferences.setString(AppPreferences.SELECTED_RECIPE, "", mContext);
+                imgDesired.setBackgroundResource(R.drawable.ic_undesired);
+            } else {
+                AppPreferences.setString(AppPreferences.SELECTED_RECIPE, MyApplication.getmGson().toJson(mRecipe), mContext);
+                imgDesired.setBackgroundResource(R.drawable.ic_desired);
+            }
+            isDesired = !isDesired;
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, BakingWidget.class));
+
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.gridView);
+        }
+    };
 
     public static FragmentRecipeDetails newInstance(Recipe recipe) {
         FragmentRecipeDetails fragment = new FragmentRecipeDetails();
@@ -86,5 +126,11 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
     @Override
     public void onStepClicked(Step step) {
         ActivityStep.startActivity(mContext, mRecipe, step);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(Constants.SELECTED_RECIPE, mRecipe);
     }
 }
