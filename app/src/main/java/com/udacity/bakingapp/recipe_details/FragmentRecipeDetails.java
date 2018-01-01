@@ -41,18 +41,6 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
-        if (savedInstanceState == null) {
-            if (getArguments() != null)
-                mRecipe = getArguments().getParcelable(Constants.SELECTED_RECIPE);
-        } else
-            savedInstanceState.getParcelable(Constants.SELECTED_RECIPE);
-        
-        Recipe tempRecipe = MyApplication.getmGson().fromJson(AppPreferences.getString(AppPreferences.SELECTED_RECIPE, mContext, ""), Recipe.class);
-
-        if (mRecipe != null && tempRecipe != null) {
-            if (mRecipe.getId() == tempRecipe.getId())
-                isDesired = true;
-        }
     }
 
     @Nullable
@@ -69,6 +57,16 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            if (getArguments() != null)
+                mRecipe = getArguments().getParcelable(Constants.SELECTED_RECIPE);
+        } else
+            mRecipe = savedInstanceState.getParcelable(Constants.SELECTED_RECIPE);
+        Recipe tempRecipe = MyApplication.getmGson().fromJson(AppPreferences.getString(AppPreferences.SELECTED_RECIPE, mContext, ""), Recipe.class);
+        if (mRecipe != null && tempRecipe != null) {
+            if (mRecipe.getId() == tempRecipe.getId())
+                isDesired = true;
+        }
         initializeVariables();
         rvIngredient.setLayoutManager(mLayoutManagerIngredients);
         rvSteps.setLayoutManager(mLayoutManagerSteps);
