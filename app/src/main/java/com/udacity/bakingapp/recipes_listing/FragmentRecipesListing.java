@@ -14,7 +14,6 @@ import com.udacity.bakingapp.R;
 import com.udacity.bakingapp.common.base.BaseFragment;
 import com.udacity.bakingapp.common.helpers.Utilities;
 import com.udacity.bakingapp.common.models.Recipe;
-import com.udacity.bakingapp.steps.ActivityStep;
 
 /**
  * Created by eslam on 12/23/17.

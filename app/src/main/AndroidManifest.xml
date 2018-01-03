@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".steps.ActivityStep"
+            android:name=".steps.ActivityRecipeDetails"
             android:parentActivityName=".recipes_listing.ActivityRecipes">
         </activity>
 

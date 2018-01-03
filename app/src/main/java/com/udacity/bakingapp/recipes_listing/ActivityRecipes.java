@@ -6,13 +6,13 @@ import android.support.v7.widget.Toolbar;
 
 import com.udacity.bakingapp.R;
 import com.udacity.bakingapp.common.base.BaseActivity;
-import com.udacity.bakingapp.common.helpers.Utilities;
+import com.udacity.bakingapp.common.helpers.AppPreferences;
 import com.udacity.bakingapp.common.models.Recipe;
-import com.udacity.bakingapp.recipe_details.FragmentRecipeDetails;
+import com.udacity.bakingapp.steps.ActivityRecipeDetails;
 
 public class ActivityRecipes extends BaseActivity implements FragmentRecipesListing.RecipeListingInteraction {
     private Toolbar mToolbarRecipesListing;
-    private FragmentRecipeDetails fragmentDetails;
+    private FragmentRecipesListing mFragmentListing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,11 +20,9 @@ public class ActivityRecipes extends BaseActivity implements FragmentRecipesList
         setContentView(R.layout.activity_recipes_listing);
         initializeViews();
         if (savedInstanceState != null) {
-            fragmentDetails = (FragmentRecipeDetails) getSupportFragmentManager().getFragment(savedInstanceState, "FragmentDetails");
-            if (fragmentDetails != null)
-                replaceFragment(fragmentDetails,
-                        Utilities.isTablet(this) ? R.id.fragmentContainerDetails :
-                                R.id.fragmentContainerRecipeListing, true);
+            mFragmentListing = (FragmentRecipesListing) getSupportFragmentManager().getFragment(savedInstanceState, "FragmentListing");
+            if (mFragmentListing != null)
+                replaceFragment(mFragmentListing, R.id.fragmentContainerRecipeListing, false);
         } else
             loadFragments();
         setToolbar(mToolbarRecipesListing, getString(R.string.app_name), false);
@@ -47,18 +45,16 @@ public class ActivityRecipes extends BaseActivity implements FragmentRecipesList
     }
 
     @Override
-    public void onRecipeClicked(Recipe recipe) {
-        if (fragmentDetails == null)
-            fragmentDetails = FragmentRecipeDetails.newInstance(recipe);
-        replaceFragment(fragmentDetails,
-                Utilities.isTablet(this) ? R.id.fragmentContainerDetails :
-                        R.id.fragmentContainerRecipeListing, true);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mFragmentListing != null)
+            getSupportFragmentManager().putFragment(outState, "FragmentListing", mFragmentListing);
+
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        getSupportFragmentManager().putFragment(outState, "FragmentDetails", fragmentDetails);
 
+    @Override
+    public void onRecipeClicked(Recipe recipe) {
+        ActivityRecipeDetails.startActivity(this, recipe);
     }
 }

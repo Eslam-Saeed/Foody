@@ -1,18 +1,17 @@
 package com.udacity.bakingapp.steps;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,13 +35,18 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.udacity.bakingapp.R;
-import com.udacity.bakingapp.common.base.BaseActivity;
+import com.udacity.bakingapp.common.base.BaseFragment;
+import com.udacity.bakingapp.common.helpers.AppPreferences;
 import com.udacity.bakingapp.common.helpers.Constants;
 import com.udacity.bakingapp.common.models.Recipe;
 import com.udacity.bakingapp.common.models.Step;
 
-public class ActivityStep extends BaseActivity implements ExoPlayer.EventListener {
-    private Toolbar mToolbarStep;
+/**
+ * Created by eslam on 1/2/18.
+ */
+
+public class FragmentStep extends BaseFragment implements ExoPlayer.EventListener {
+    private Context mContext;
     private Step mStep;
     private Recipe mRecipe;
     private SimpleExoPlayer mExoPlayer;
@@ -52,50 +56,55 @@ public class ActivityStep extends BaseActivity implements ExoPlayer.EventListene
     private MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mPlaybackBuilder;
     private boolean isLandscape = false;
-
+    private View view;
+    private long position = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getActivity();
+        if (savedInstanceState != null)
+            position = savedInstanceState.getLong(Constants.VIDEO_CURRENT_POSITION);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
-            requestWindowFeature(Window.FEATURE_NO_TITLE); //Remove title bar
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //Remove notification bar
-            setContentView(R.layout.fullscreen_video);
             isLandscape = true;
-        } else
-            setContentView(R.layout.activity_step);
-        if (getIntent() != null) {
-            mStep = getIntent().getParcelableExtra(Constants.SELECTED_STEP);
-            mRecipe = getIntent().getParcelableExtra(Constants.SELECTED_RECIPE);
+            view = inflater.inflate(R.layout.fullscreen_video, null);
+        } else {
+            view = inflater.inflate(R.layout.fragment_recipe_step, null);
+            isLandscape = false;
         }
-        initializeViews();
+
+        initializeViews(view);
+        getDataFromArguments();
         loadDataToViews();
         setListeners();
-        loadFragments();
-        if (mRecipe != null && !isLandscape)
-            setToolbar(mToolbarStep, mRecipe.getName(), true);
+        return view;
+    }
 
-
+    private void getDataFromArguments() {
+        if (getArguments() != null) {
+            mRecipe = getArguments().getParcelable(AppPreferences.SELECTED_RECIPE);
+            mStep = getArguments().getParcelable(AppPreferences.SELECTED_STEP);
+        }
     }
 
     @Override
-    protected void initializeViews() {
+    protected void initializeViews(View v) {
         if (!isLandscape) {
-            mToolbarStep = findViewById(R.id.toolbarStep);
-            txtShortDescription = findViewById(R.id.txtStepShortDesc);
-            txtDescription = findViewById(R.id.txtStepDescription);
+            txtShortDescription = v.findViewById(R.id.txtStepShortDesc);
+            txtDescription = v.findViewById(R.id.txtStepDescription);
         }
-        imgStep = findViewById(R.id.imgStep);
-        mExoPlayerView = findViewById(R.id.simpleExoPlayer);
+        imgStep = v.findViewById(R.id.imgStep);
+        mExoPlayerView = v.findViewById(R.id.simpleExoPlayer);
     }
 
     @Override
     protected void setListeners() {
         mExoPlayer.addListener(this);
-    }
-
-    @Override
-    protected void loadFragments() {
     }
 
     private void loadDataToViews() {
@@ -110,7 +119,7 @@ public class ActivityStep extends BaseActivity implements ExoPlayer.EventListene
                 mExoPlayerView.setVisibility(View.VISIBLE);
                 mExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.ic_play));
             } else if (!TextUtils.isEmpty(mStep.getThumbnailURL())) {
-                Picasso.with(this).load(mStep.getThumbnailURL()).into(imgStep);
+                Picasso.with(mContext).load(mStep.getThumbnailURL()).into(imgStep);
                 imgStep.setVisibility(View.VISIBLE);
                 mExoPlayerView.setVisibility(View.GONE);
             }
@@ -118,7 +127,7 @@ public class ActivityStep extends BaseActivity implements ExoPlayer.EventListene
     }
 
     private void initializeExoPlayer() {
-        mMediaSession = new MediaSessionCompat(this, "MEDIA_SESSION");
+        mMediaSession = new MediaSessionCompat(mContext, "MEDIA_SESSION");
         mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mMediaSession.setMediaButtonReceiver(null);
         mPlaybackBuilder = new PlaybackStateCompat.Builder().setActions(
@@ -133,13 +142,15 @@ public class ActivityStep extends BaseActivity implements ExoPlayer.EventListene
         if (mExoPlayer == null) {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
-            String userAgent = Util.getUserAgent(this, "bakingapp");
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector, loadControl);
+            String userAgent = Util.getUserAgent(mContext, "bakingapp");
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
             mExoPlayerView.setPlayer(mExoPlayer);
-            MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mStep.getVideoURL()), new DefaultDataSourceFactory(this, userAgent
+            MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mStep.getVideoURL()), new DefaultDataSourceFactory(mContext, userAgent
             ), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
+            if (position != 0)
+                mExoPlayer.seekTo(position);
         }
         mMediaSession.setActive(true);
     }
@@ -156,16 +167,31 @@ public class ActivityStep extends BaseActivity implements ExoPlayer.EventListene
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         releaseExoPlayer();
     }
 
-    public static void startActivity(Context context, Recipe recipe, Step step) {
-        Intent intent = new Intent(context, ActivityStep.class);
-        intent.putExtra(Constants.SELECTED_RECIPE, recipe);
-        intent.putExtra(Constants.SELECTED_STEP, step);
-        context.startActivity(intent);
+    private class MySessionCallback extends MediaSessionCompat.Callback {
+        @Override
+        public void onPlay() {
+            super.onPlay();
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+        }
+
+        @Override
+        public void onSkipToPrevious() {
+            super.onSkipToPrevious();
+        }
+
+        @Override
+        public void onSkipToNext() {
+            super.onSkipToNext();
+        }
     }
 
     @Override
@@ -215,25 +241,20 @@ public class ActivityStep extends BaseActivity implements ExoPlayer.EventListene
 
     }
 
-    private class MySessionCallback extends MediaSessionCompat.Callback {
-        @Override
-        public void onPlay() {
-            super.onPlay();
-        }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mExoPlayer != null)
+            outState.putLong(Constants.VIDEO_CURRENT_POSITION, mExoPlayer.getContentPosition());
 
-        @Override
-        public void onPause() {
-            super.onPause();
-        }
+    }
 
-        @Override
-        public void onSkipToPrevious() {
-            super.onSkipToPrevious();
-        }
-
-        @Override
-        public void onSkipToNext() {
-            super.onSkipToNext();
-        }
+    public static FragmentStep newInstance(Recipe recipe, Step step) {
+        FragmentStep fragmentStep = new FragmentStep();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(AppPreferences.SELECTED_RECIPE, recipe);
+        bundle.putParcelable(AppPreferences.SELECTED_STEP, step);
+        fragmentStep.setArguments(bundle);
+        return fragmentStep;
     }
 }

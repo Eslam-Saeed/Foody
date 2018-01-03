@@ -12,31 +12,49 @@ import java.util.ArrayList;
  * Created by eslam on 12/23/17.
  */
 
-public class Recipe implements Parcelable{
+public class Recipe implements Parcelable {
     @SerializedName("id")
     @Expose
     private int id;
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("ingredients")
-    @Expose
-    private ArrayList<Ingredient> ingredients;
-    @SerializedName("steps")
-    @Expose
-    private ArrayList<Step> steps;
     @SerializedName("servings")
     @Expose
     private float servings;
     @SerializedName("image")
     @Expose
     private String image;
+    @SerializedName("ingredients")
+    @Expose
+    private ArrayList<Ingredient> ingredients;
+    @SerializedName("steps")
+    @Expose
+    private ArrayList<Step> steps;
+
 
     protected Recipe(Parcel in) {
         id = in.readInt();
         name = in.readString();
         servings = in.readFloat();
         image = in.readString();
+        ingredients = in.createTypedArrayList(Ingredient.CREATOR);
+        steps = in.createTypedArrayList(Step.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeFloat(servings);
+        dest.writeString(image);
+        dest.writeTypedList(ingredients);
+        dest.writeTypedList(steps);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
@@ -99,16 +117,4 @@ public class Recipe implements Parcelable{
         this.image = image;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
-        parcel.writeString(name);
-        parcel.writeFloat(servings);
-        parcel.writeString(image);
-    }
 }

@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -24,26 +25,26 @@ public class BakingWidget extends AppWidgetProvider {
                                 int appWidgetId) {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget);
+        //Log.w("WidgetExample", String.valueOf(context.getPackageName()));
         Intent intent = new Intent(context, GridWidgetService.class);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         views.setRemoteAdapter(R.id.gridView, intent);
-        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-        views.setEmptyView(R.id.gridView , R.id.emptyView);
 
         Intent intent1 = new Intent(context, ActivityRecipes.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
         views.setOnClickPendingIntent(R.id.gridView, pendingIntent);
 
+        views.setEmptyView(R.id.gridView, R.id.emptyView);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
-        super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
     @Override
@@ -55,5 +56,14 @@ public class BakingWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
     }
+
+/*    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        if (intent != null && intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+            int[] ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+            onUpdate(context, AppWidgetManager.getInstance(context), ids);
+        }
+    }*/
 }
 
