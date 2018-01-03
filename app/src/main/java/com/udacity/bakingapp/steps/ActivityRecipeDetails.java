@@ -40,12 +40,23 @@ public class ActivityRecipeDetails extends BaseActivity implements FragmentRecip
         initializeViews();
         setListeners();
         if (savedInstanceState != null) {
-            //fragmentDetails = (FragmentRecipeDetails) getSupportFragmentManager().getFragment(savedInstanceState, "FragmentDetails");
+            fragmentDetails = (FragmentRecipeDetails) getSupportFragmentManager().getFragment(savedInstanceState, "FragmentDetails");
             mFragmentStep = (FragmentStep) getSupportFragmentManager().getFragment(savedInstanceState, "FragmentStep");
-        }
-        loadFragments();
+            loadSavedFragments();
+        } else
+            loadFragments();
         if (mRecipe != null && !isLandscape)
             setToolbar(mToolbarStep, mRecipe.getName(), true);
+
+    }
+
+    private void loadSavedFragments() {
+        replaceFragment(fragmentDetails, R.id.fragmentContainerDetails, true);
+        if (Utilities.isTablet(this) && mFragmentStep != null)
+            replaceFragment(mFragmentStep, R.id.fragmentContainerStep, true);
+        else if (mFragmentStep != null)
+            replaceFragment(mFragmentStep, R.id.fragmentContainerDetails, true);
+
 
     }
 
@@ -62,13 +73,8 @@ public class ActivityRecipeDetails extends BaseActivity implements FragmentRecip
 
     @Override
     protected void loadFragments() {
-        if (fragmentDetails == null)
-            fragmentDetails = FragmentRecipeDetails.newInstance(mRecipe);
-        if (mFragmentStep == null)
-            replaceFragment(fragmentDetails, R.id.fragmentContainerDetails, false);
-        else
-            replaceFragment(mFragmentStep, Utilities.isTablet(this) ? R.id.fragmentContainerStep : R.id.fragmentContainerDetails, true);
-
+        fragmentDetails = FragmentRecipeDetails.newInstance(mRecipe);
+        replaceFragment(fragmentDetails, R.id.fragmentContainerDetails, true);
 
     }
 
@@ -81,7 +87,8 @@ public class ActivityRecipeDetails extends BaseActivity implements FragmentRecip
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //getSupportFragmentManager().putFragment(outState, "FragmentDetails", fragmentDetails);
+        if (fragmentDetails != null)
+            getSupportFragmentManager().putFragment(outState, "FragmentDetails", fragmentDetails);
         if (mFragmentStep != null)
             getSupportFragmentManager().putFragment(outState, "FragmentStep", mFragmentStep);
     }
