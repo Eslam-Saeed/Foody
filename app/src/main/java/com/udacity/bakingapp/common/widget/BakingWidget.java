@@ -3,18 +3,13 @@ package com.udacity.bakingapp.common.widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.udacity.bakingapp.R;
-import com.udacity.bakingapp.common.helpers.Constants;
 import com.udacity.bakingapp.recipes_listing.ActivityRecipes;
-
-import java.util.prefs.BackingStoreException;
 
 /**
  * Implementation of App Widget functionality.
@@ -43,7 +38,7 @@ public class BakingWidget extends AppWidgetProvider {
         // There may be multiple widgets active, so update all of them
         super.onUpdate(context, appWidgetManager, appWidgetIds);
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+            updateAppWidget(context.getApplicationContext(), appWidgetManager, appWidgetId);
         }
     }
 
@@ -57,13 +52,18 @@ public class BakingWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-/*    @Override
+    @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (intent != null && intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
-            int[] ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-            onUpdate(context, AppWidgetManager.getInstance(context), ids);
+            int[] ids = AppWidgetManager.getInstance(context.getApplicationContext()).getAppWidgetIds(new ComponentName(context.getApplicationContext(), BakingWidget.class));
+            onUpdate(context.getApplicationContext(), AppWidgetManager.getInstance(context), ids);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget);
+            //Log.w("WidgetExample", String.valueOf(context.getPackageName()));
+            Intent intenta = new Intent(context, GridWidgetService.class);
+            intenta.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            views.setRemoteAdapter(R.id.gridView, intenta);
         }
-    }*/
+    }
 }
 

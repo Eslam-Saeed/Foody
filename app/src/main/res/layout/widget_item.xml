@@ -1,4 +1,4 @@
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,8 +8,10 @@
         android:id="@+id/txtItemWidget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="helllllo"
         android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/font_large"
+        android:textSize="@dimen/font_xlarge"
         />
 
-</FrameLayout>
+</LinearLayout>

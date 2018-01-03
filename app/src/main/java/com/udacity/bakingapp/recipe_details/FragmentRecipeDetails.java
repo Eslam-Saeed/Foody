@@ -134,7 +134,7 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
                 AppPreferences.setString(AppPreferences.SELECTED_RECIPE, "", mContext);
                 imgDesired.setBackgroundResource(R.drawable.ic_undesired);
             } else {
-                AppPreferences.setString(AppPreferences.SELECTED_RECIPE, /*MyApplication.getmGson().toJson(mRecipe)*/"", mContext);
+                AppPreferences.setString(AppPreferences.SELECTED_RECIPE, MyApplication.getmGson().toJson(mRecipe), mContext);
                 imgDesired.setBackgroundResource(R.drawable.ic_desired);
             }
             isDesired = !isDesired;
@@ -149,7 +149,7 @@ public class FragmentRecipeDetails extends BaseFragment implements AdapterSteps.
             int[] ids = AppWidgetManager.getInstance(mContext).getAppWidgetIds(new ComponentName(mContext, BakingWidget.class));
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
             mContext.sendBroadcast(intent);
-            //appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.gridView);
+            appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.gridView);
         }
     };
 

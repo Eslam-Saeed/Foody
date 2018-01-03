@@ -86,6 +86,8 @@ public class Recipe implements Parcelable {
     }
 
     public ArrayList<Ingredient> getIngredients() {
+        if (ingredients == null)
+            return new ArrayList<>();
         return ingredients;
     }
 

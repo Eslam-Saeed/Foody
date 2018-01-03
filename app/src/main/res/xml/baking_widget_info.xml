@@ -8,5 +8,5 @@
     android:previewImage="@drawable/ic_launcher_background"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen">
+    android:widgetCategory="keyguard|home_screen">
 </appwidget-provider>
