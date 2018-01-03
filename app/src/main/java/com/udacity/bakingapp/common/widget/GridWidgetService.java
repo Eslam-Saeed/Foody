@@ -1,5 +1,6 @@
 package com.udacity.bakingapp.common.widget;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -8,6 +9,7 @@ import android.widget.RemoteViewsService;
 import com.udacity.bakingapp.R;
 import com.udacity.bakingapp.common.helpers.AppPreferences;
 import com.udacity.bakingapp.common.models.Recipe;
+import com.udacity.bakingapp.recipes_listing.ActivityRecipes;
 
 
 public class GridWidgetService extends RemoteViewsService {
@@ -53,7 +55,8 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
         if (mRecipe != null && mRecipe.getIngredients() != null && mRecipe.getIngredients().get(position) != null)
-            remoteViews.setTextViewText(R.id.txtIngredient, mRecipe.getIngredients().get(position).getIngredient());
+            remoteViews.setTextViewText(R.id.txtItemWidget, mRecipe.getIngredients().get(position).getIngredient());
+
 
         return remoteViews;
     }

@@ -34,13 +34,13 @@ public class ActivityRecipesTest {
     public ActivityTestRule<ActivityRecipes> mActivityTestRule = new ActivityTestRule<>(ActivityRecipes.class);
 
     @Test
-    public void activityRecipesTest2() {
+    public void activityRecipesTest() {
         ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.rvRecipesListing),
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 0)));
-        recyclerView.perform(actionOnItemAtPosition(1, click()));
+        recyclerView.perform(actionOnItemAtPosition(0, click()));
 
     }
 
